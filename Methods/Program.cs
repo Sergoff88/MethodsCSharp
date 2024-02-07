@@ -1,5 +1,8 @@
-﻿CheckNumber using System.ComponentModel.Design;
+﻿using System;
+using System.ComponentModel.Design;
+using System.Dynamic;
 using System.Runtime.InteropServices;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Methods
 {
@@ -7,32 +10,10 @@ namespace Methods
     {
         static void Main(string[] args)
         {
-            string firstName, lastName;
-            int age, numberOfAnimals, numberOfColors;
-            //Имя
-            Console.WriteLine("Укажите Имя");
-            firstName = Console.ReadLine();
-            //Фамилия
-            Console.WriteLine("Укажите Фамилию");
-            lastName = Console.ReadLine();
-            //Возраст
-            Console.WriteLine("Укажите возраст");
-            age = CheckNumber(Console.ReadLine());
-            //Питомцы
-            Console.WriteLine("Есть ли питомцы");
-            if (Console.ReadLine().ToUpper() == "Да".ToUpper())
-            {
-                Console.WriteLine("Укажите количество питомцев");
-                string[] ArrNicknameAnimals = GetArrayFromConsole(CheckNumber(Console.ReadLine()), "Укажите имя {0}-ого питомца");
-            }
-            else
-            {
-                Console.WriteLine("Нет");
-            }
-            //Цвета
-            Console.WriteLine("Сколько у вас любимых цветов?");
-            numberOfColors = Convert.ToInt32(Console.ReadLine());
-            string[] arrFavoriteColors = GetArrayFromConsole(numberOfColors, "Укажите {0}-й любимый цвет");
+            // Спрашиваем у пользователя данные
+            var tuple = GetTuple();
+
+            ShowTuple(tuple);
 
         }
         static string[] ArrayNicknameAnimals(int numberOfAnimals)
@@ -83,12 +64,69 @@ namespace Methods
             }
             return result;
         }
-    }
+        static void ShowTuple((string, string, int, int, int, string[], string[]) tuple)
+        {
+            Console.WriteLine("Имя: {0}", tuple.Item1);
+            Console.WriteLine("фамилия: {0}", tuple.Item2);
+            Console.WriteLine("возраст: {0}", tuple.Item3);
+            Console.WriteLine("Количество питомцев: {0}", tuple.Item4);
+            Console.WriteLine("их клички:");
+            foreach (var p in tuple.Item6)
+            {
+                Console.WriteLine(p);
+            }
+            Console.WriteLine("Количество любимых цветов: {0}", tuple.Item5);
+            foreach (var p in tuple.Item7)
+            {
+                Console.WriteLine(p);
+            }
+        }
 
-}   // Как лучше поступать плодить больше простого кода (доп переменные, дополнительные методы)? или же делать меньше кода, но на читаемость он будет более сложный
-    //   //Цвета
-    //Console.WriteLine("Сколько у вас любимых цветов?");
-    //string numberOfColors = Convert.ToInt32(Console.ReadLine());
-    //string[] arrFavoriteColors = GetArrayFromConsole(numberOfColors, "Укажите {0}-й любимый цвет");
+        static (string, string, int, int, int, string[], string[]) GetTuple()
+        {
+            (string firstName, string lastName, int age, int numberOfAnimals, int numberOfColors, string[] arrNicknameAnimals, string[] arrFavoriteColors) data;
+
+            //Имя
+            Console.WriteLine("Укажите Имя");
+            data.firstName = Console.ReadLine();
+
+            //Фамилия
+            Console.WriteLine("Укажите Фамилию");
+            data.lastName = Console.ReadLine();
+
+            //Возраст 
+            Console.WriteLine("Укажите возраст");
+            data.age = CheckNumber(Console.ReadLine());
+
+            //Питомцы
+            Console.WriteLine("Есть ли питомцы. Ответ да/нет");
+            if (Console.ReadLine().ToUpper() == "Да".ToUpper())
+            {
+                Console.WriteLine("Укажите количество питомцев");
+                data.numberOfAnimals = Convert.ToInt32(CheckNumber(Console.ReadLine()));
+                data.arrNicknameAnimals = GetArrayFromConsole(data.numberOfAnimals, "Укажите имя {0}-ого питомца");
+            }
+            else
+            {
+                data.numberOfAnimals = 0;
+                data.arrNicknameAnimals = new string[0];
+            }
+
+            //Цвета
+            Console.WriteLine("Сколько у вас любимых цветов?");
+            data.numberOfColors = Convert.ToInt32(CheckNumber(Console.ReadLine()));
+            data.arrFavoriteColors = GetArrayFromConsole(data.numberOfColors, "Укажите {0}-й любимый цвет");
+
+            return (data.firstName, data.lastName, data.age, data.numberOfAnimals, data.numberOfColors, data.arrNicknameAnimals, data.arrFavoriteColors);
+        }
+
+
+
+    }
+}   // ВОПРОСЫ!
+    // Как лучше поступать при передачи аргументов в методы? 
+    // Сначала их загонять в переменные, или же лучше, при возможности, использовать метод, который возвратит этот аргумент?
+    // А если для получения аргумента необходимо будет несколько вложенных методов?
+    // Как правильнее?
 
 
